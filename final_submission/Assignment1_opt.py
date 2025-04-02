@@ -245,5 +245,5 @@ def D1e4_experiment():
 
 if __name__ == "__main__":
     multiprocessing.set_start_method("spawn", force=True)
-    D1e4_experiment()
+    #D1e4_experiment()
     D1e5_experiment()
