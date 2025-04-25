@@ -12,7 +12,7 @@ def generate_data(D=10000, teacher_seed=42, alpha_min=0.2, alpha_max=2):
     np.random.seed(teacher_seed)
     
     # Generate teacher weights
-    w_teacher = 2 * np.random.binomial(1, 0.5, size=D) - 1
+    w_teacher = 2 * np.random.binomial(1, 0.5, size=D) - 1 # (D,)
 
     # Calculate total number of samples
     n_total = int((alpha_max + alpha_min) * D)
@@ -21,18 +21,18 @@ def generate_data(D=10000, teacher_seed=42, alpha_min=0.2, alpha_max=2):
     x_filepath = './X_data.dat'
     y_filepath = './y_data.dat'
     
-    X = np.memmap(x_filepath, dtype='float16', mode='w+', shape=(n_total, D))
-    y = np.memmap(y_filepath, dtype='float16', mode='w+', shape=(n_total,))
+    X = np.memmap(x_filepath, dtype='float16', mode='w+', shape=(n_total, D)) #(N,D)
+    y = np.memmap(y_filepath, dtype='float16', mode='w+', shape=(n_total,))   #(N,)
 
     # Process data in batches
     batch_size = min(1e4,D)
-    num_batches = (n_total + batch_size - 1) // batch_size
+    num_batches =int( (n_total + batch_size - 1) // batch_size)
     
     for i in range(num_batches):
         # Calculate current batch parameters
-        start = i * batch_size
-        end = min((i + 1) * batch_size, n_total)
-        current_batch_size = end - start
+        start =int(i * batch_size)
+        end = int(min((i + 1) * batch_size, n_total))
+        current_batch_size = int(end - start)
         
         # Generate batch data
         X_batch = np.random.normal(0, 1, (current_batch_size, D)).astype(np.float16)
@@ -74,6 +74,7 @@ def run_experiment(D=10000, teacher_seed=42):
     regularization_params = np.logspace(-3, 3, 7) 
 
     for alpha in alphas:
+        print("alpha = ",alpha)
         n = int(alpha * D)
         X_subset = X_train[:n]
         y_subset = y_train[:n]
@@ -142,7 +143,7 @@ def D1e5_experiment():
     
 def D1e4_experiment():
     # Experiment parameters
-    D = int(1e4)    
+    D = int(3e1)    
     teacher_seed1,teacher_seed2 = 24,72
     generate_data(D=D, teacher_seed=teacher_seed1)
     alphas, errors1 = run_experiment(D=D, teacher_seed=teacher_seed1)
